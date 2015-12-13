@@ -35,10 +35,16 @@ class PhpCbfCommand(sublime_plugin.TextCommand):
             tab_width = ' --tab_width='+tab_width
         file_name = self.view.file_name()
         if file_name:
-            call = path+" "+patch+suffix+sniff_string+tab_width+' --standard='+level+" --encoding="+encoding+" "+file_name
+            call = path+" "+file_name
+            cmd = [path, file_name]
+            run = '"' + '" "'.join(cmd) + '"'
+            print(run)
             try:
-                output = subprocess.check_output(call, shell=True,universal_newlines=True)
+                output = subprocess.check_output(run, shell=True)
+                print("output is:"+output[0:].decode("utf-8"))
+                return output
             except subprocess.CalledProcessError as e:
+                print(e.returncode)
                 print(e.output)
                 sublime.status_message("An error occured while fixing, please check the console")
             else:
